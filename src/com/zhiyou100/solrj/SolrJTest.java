@@ -45,7 +45,7 @@ public class SolrJTest {
 	}
 
 	@Test
-	public void test03() throws Exception {
+	public void test031() throws Exception {
 		// 创建连接
 		SolrServer server = new HttpSolrServer(BASEURL);
 		// 创建查询对象
