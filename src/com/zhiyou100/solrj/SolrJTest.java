@@ -16,173 +16,94 @@ import org.junit.Test;
 
 public class SolrJTest {
 	
-	private static final String BASEURL = "http://localhost:8080/solr";
+	private static final String BASEURL = "http://localhost:8090/solr";
 
 	@Test
 	public void test01() throws Exception {
-		// ´´½¨Á¬½Ó, Ä¬ÈÏÁ¬½Ó¾ÍÊÇºË1, Èç¹ûĞèÒªÁ¬½ÓºË2, ¿ÉÒÔ½«Â·¾¶¸ÄÎª
+		// åˆ›å»ºè¿æ¥, é»˜è®¤è¿æ¥å°±æ˜¯æ ¸1, å¦‚æœéœ€è¦è¿æ¥æ ¸2, å¯ä»¥å°†è·¯å¾„æ”¹ä¸º
 		// http://localhost:8080//solr/collection2
 		SolrServer server = new HttpSolrServer(BASEURL);
 
-		// ´´½¨SolrInputDocument¶ÔÏó
+		// åˆ›å»ºSolrInputDocumentå¯¹è±¡
 		SolrInputDocument document = new SolrInputDocument();
 
-		// D:\develop\solr\solrhome\collection1\conf data-config.xmlÖĞÃ»ÓĞÕâ¸öÓò
+		// D:\develop\solr\solrhome\collection1\conf data-config.xmlä¸­æ²¡æœ‰è¿™ä¸ªåŸŸ
 		// document.addField("height", "180");
 		document.addField("id", "haha");
-		document.addField("name", "ÀîÀÖ");
+		document.addField("name", "æä¹");
 
 		server.add(document, 100);
 	}
 
 	@Test
 	public void test02() throws Exception {
-		// ´´½¨Á¬½Ó
+		// åˆ›å»ºè¿æ¥
 		SolrServer server = new HttpSolrServer(BASEURL);
 
-		// È«²¿É¾³ı
+		// å…¨éƒ¨åˆ é™¤
 		server.deleteByQuery("*:*", 100);
 	}
 
 	@Test
 	public void test03() throws Exception {
-		// ´´½¨Á¬½Ó
+		// åˆ›å»ºè¿æ¥
 		SolrServer server = new HttpSolrServer(BASEURL);
-		// ´´½¨²éÑ¯¶ÔÏó
+		// åˆ›å»ºæŸ¥è¯¢å¯¹è±¡
 		SolrQuery query = new SolrQuery();
 		
-		//ÉèÖÃ²éÑ¯Ìõ¼şq, ¸ñÊ½Îª: ÓòÃû: Ë÷Òı(ÓĞ·ÖÎö¿ÉÒÔ¼òĞ´)
-		query.set("q", "½ğÊô");
-		//·¶Î§²éÑ¯
+		//è®¾ç½®æŸ¥è¯¢æ¡ä»¶q, æ ¼å¼ä¸º: åŸŸå: ç´¢å¼•(æœ‰åˆ†æå¯ä»¥ç®€å†™)
+		query.set("q", "é‡‘å±");
+		//èŒƒå›´æŸ¥è¯¢
 		query.set("fq", "product_price:[* TO 10]");
-		//ÅÅĞò²éÑ¯
+		//æ’åºæŸ¥è¯¢
 		query.setSort("product_price",ORDER.asc);
-		//ÉèÖÃÆğÊ¼Ë÷Òı
+		//è®¾ç½®èµ·å§‹ç´¢å¼•
 		query.setStart(0);
-		//ÉèÖÃ²éÑ¯ÌõÊı
+		//è®¾ç½®æŸ¥è¯¢æ¡æ•°
 		query.setRows(15);
-		//ÉèÖÃÒª²éÑ¯µÄÓò
+		//è®¾ç½®è¦æŸ¥è¯¢çš„åŸŸ
 		query.set("f1","product_name,id,product_price");
-		//ÉèÖÃÄ¬ÈÏ²éÑ¯
+		//è®¾ç½®é»˜è®¤æŸ¥è¯¢
 		query.set("df", "product_name");
 		
-		//ÉèÖÃ¸ßÁÁ
+		//è®¾ç½®é«˜äº®
 		query.setHighlight(true);
 		query.addHighlightField("product_name");
 		query.setHighlightSimplePre("<span color='red'>");
 		query.setHighlightSimplePost("</span>");
 		
 		
-		// Ö´ĞĞ²éÑ¯
+		// æ‰§è¡ŒæŸ¥è¯¢
 		QueryResponse response = server.query(query);
-		// »ñÈ¡½á¹û¼¯
+		// è·å–ç»“æœé›†
 		SolrDocumentList results = response.getResults();
-		//»ñÈ¡¸ßÁÁ½á¹û¼¯
+		//è·å–é«˜äº®ç»“æœé›†
 		Map<String, Map<String, List<String>>> highlighting = response.getHighlighting();
 		
-		//»ñÈ¡×ÜÌõÊı
+		//è·å–æ€»æ¡æ•°
 		long numFound = results.getNumFound();
 		System.out.println(numFound);
 		/**
-		 * "product_catalog_name": "ÓÄÄ¬ÔÓ»õ", 
+		 * "product_catalog_name": "å¹½é»˜æ‚è´§", 
 		 * "product_price": 18.9,
-		 * "product_name": "»¨¶ù¶ä¶ä²ÊÉ«½ğÊôÃÅºó¹Ò 8¹³Ãâ¶¤ÃÅ±³¹Ò¹³2066", 
+		 * "product_name": "èŠ±å„¿æœµæœµå½©è‰²é‡‘å±é—¨åæŒ‚ 8é’©å…é’‰é—¨èƒŒæŒ‚é’©2066", 
 		 * "id": "1",
 		 * "product_picture": "2014032613103438.png", 
 		 * "_version_": 1579861591688478700
 		 */
-		// ±éÀú
+		// éå†
 		for (SolrDocument document : results) {
-			System.out.println("ÉÌÆ·id" + "\t" + "" + "" + document.get("id"));
-			System.out.println("ÉÌÆ·Ãû³Æ"+"\t"+""+""+document.get("product_catalog_name"));
-			System.out.println("ÉÌÆ·¼Û¸ñ"+"\t"+""+""+document.get("product_price"));
+			System.out.println("å•†å“id" + "\t" + "" + "" + document.get("id"));
+			System.out.println("å•†å“åç§°"+"\t"+""+""+document.get("product_catalog_name"));
+			System.out.println("å•†å“ä»·æ ¼"+"\t"+""+""+document.get("product_price"));
 			
 			Map<String, List<String>> map = highlighting.get(document.get("id"));
 			List<String> list = map.get("product_name");
 			System.out.println(list);
-			
+			                                            
 			System.out.println("**");
 			
 		}
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }
